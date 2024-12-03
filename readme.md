@@ -4,16 +4,23 @@ https://adventofcode.com/2024
 
 ## Tests
 
+- `.` is the `advent-of-code-2024` folder
+- Verbose output with `-v` flag
+
 Run all tests:
 
 ```zsh
-cd /path/to/advent-of-code-2024
 go test ./...
 ```
 
-Run single test:
+Run tests in a folder:
 
 ```zsh
-cd /path/to/advent-of-code-2024
 go test ./day01
+```
+
+Run specific test in a folder:
+
+```zsh
+go test ./day01 -run TestFirstHalf
 ```
