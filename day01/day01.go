@@ -1,20 +1,14 @@
-package main
+package day01
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"sort"
 	"strconv"
 	"strings"
 )
 
-func main() {
-	firstHalf()
-	secondHalf()
-}
-
-func firstHalf() {
+func FirstHalf() int {
 	// file, _ := os.Open("sample.txt")
 	file, _ := os.Open("input.txt")
 	defer file.Close()
@@ -51,10 +45,10 @@ func firstHalf() {
 		sum = sum + absInt(leftList[index]-rightList[index])
 	}
 
-	fmt.Println("firstHalf", sum)
+	return sum
 }
 
-func secondHalf() {
+func SecondHalf() int {
 	// file, _ := os.Open("sample.txt")
 	file, _ := os.Open("input.txt")
 	defer file.Close()
@@ -98,5 +92,5 @@ func secondHalf() {
 		}
 	}
 
-	fmt.Println("secondHalf", sum)
+	return sum
 }
