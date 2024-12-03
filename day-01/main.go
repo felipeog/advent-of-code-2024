@@ -11,7 +11,7 @@ import (
 
 func main() {
 	firstHalf()
-	secondtHalf()
+	secondHalf()
 }
 
 func firstHalf() {
@@ -54,7 +54,7 @@ func firstHalf() {
 	fmt.Println("firstHalf", sum)
 }
 
-func secondtHalf() {
+func secondHalf() {
 	// file, _ := os.Open("sample.txt")
 	file, _ := os.Open("input.txt")
 	defer file.Close()
