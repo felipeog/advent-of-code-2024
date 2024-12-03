@@ -1,19 +1,13 @@
-package main
+package day02
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
 )
 
-func main() {
-	firstHalf()
-	secondHalf()
-}
-
-func firstHalf() {
+func FirstHalf() int {
 	// file, _ := os.Open("sample.txt")
 	file, _ := os.Open("input.txt")
 	defer file.Close()
@@ -51,10 +45,10 @@ func firstHalf() {
 		}
 	}
 
-	fmt.Println("firstHalf", safeCount)
+	return safeCount
 }
 
-func secondHalf() {
+func SecondHalf() int {
 	// file, _ := os.Open("sample.txt")
 	file, _ := os.Open("input.txt")
 	defer file.Close()
@@ -116,5 +110,5 @@ func secondHalf() {
 		}
 	}
 
-	fmt.Println("secondHalf", safeCount)
+	return safeCount
 }

@@ -1,19 +1,13 @@
-package main
+package day03
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"regexp"
 	"strconv"
 )
 
-func main() {
-	firstHalf()
-	secondHalf()
-}
-
-func firstHalf() {
+func FirstHalf() int {
 	// file, _ := os.Open("sample1.txt")
 	file, _ := os.Open("input.txt")
 	defer file.Close()
@@ -39,10 +33,10 @@ func firstHalf() {
 		sum = sum + leftDigit*rightDigit
 	}
 
-	fmt.Println("firstHalf", sum)
+	return sum
 }
 
-func secondHalf() {
+func SecondHalf() int {
 	// file, _ := os.Open("sample2.txt")
 	file, _ := os.Open("input.txt")
 	defer file.Close()
@@ -97,5 +91,5 @@ func secondHalf() {
 		sum = sum + leftDigit*rightDigit
 	}
 
-	fmt.Println("secondHalf", sum)
+	return sum
 }
