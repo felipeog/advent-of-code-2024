@@ -67,24 +67,15 @@ func SecondHalf() int {
 	}
 
 	rightListFrequencyMap := make(map[int]int)
-	for index := range rightList {
-		rightValue := rightList[index]
-		_, exists := rightListFrequencyMap[rightValue]
-
-		if exists {
-			rightListFrequencyMap[rightValue] += 1
-		} else {
-			rightListFrequencyMap[rightValue] = 1
-		}
+	for _, rightValue := range rightList {
+		rightListFrequencyMap[rightValue]++
 	}
 
 	sum := 0
-	for index := range leftList {
-		leftValue := leftList[index]
-		_, exists := rightListFrequencyMap[leftValue]
-
+	for _, leftValue := range leftList {
+		frequency, exists := rightListFrequencyMap[leftValue]
 		if exists {
-			sum += leftValue * rightListFrequencyMap[leftValue]
+			sum += leftValue * frequency
 		}
 	}
 
