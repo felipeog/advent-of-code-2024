@@ -54,10 +54,12 @@ func SecondHalf() int {
 	defer file.Close()
 
 	reverse := func(list []int) []int {
-		for left, right := 0, len(list)-1; left < right; left, right = left+1, right-1 {
-			list[left], list[right] = list[right], list[left]
+		listCopy := make([]int, len(list))
+		copy(listCopy, list)
+		for left, right := 0, len(listCopy)-1; left < right; left, right = left+1, right-1 {
+			listCopy[left], listCopy[right] = listCopy[right], listCopy[left]
 		}
-		return list
+		return listCopy
 	}
 
 	isSafe := func(list []int) bool {
@@ -86,7 +88,7 @@ func SecondHalf() int {
 		}
 
 		if numbers[0]-numbers[1] < 0 {
-			reverse(numbers)
+			numbers = reverse(numbers)
 		}
 
 		if isSafe(numbers) {
@@ -100,13 +102,7 @@ func SecondHalf() int {
 			copy(numbersCopy, numbers)
 
 			removed := append(numbersCopy[:index], numbers[index+1:]...)
-			if isSafe(removed) {
-				safeIfRemoved = true
-				break
-			}
-
-			reverse(removed)
-			if isSafe(removed) {
+			if isSafe(removed) || isSafe(reverse(removed)) {
 				safeIfRemoved = true
 				break
 			}
