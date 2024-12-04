@@ -12,8 +12,9 @@ func FirstHalf() int {
 	file, _ := os.Open("input.txt")
 	defer file.Close()
 
-	operationsRegex, _ := regexp.Compile(`mul\(\d{1,3},\d{1,3}\)`)
-	digitsRegex, _ := regexp.Compile(`\d+`)
+	operationsRegex := regexp.MustCompile(`mul\(\d{1,3},\d{1,3}\)`)
+	digitsRegex := regexp.MustCompile(`\d+`)
+
 	operations := []string{}
 
 	scanner := bufio.NewScanner(file)
@@ -39,10 +40,11 @@ func SecondHalf() int {
 	file, _ := os.Open("input.txt")
 	defer file.Close()
 
-	operationsRegex, _ := regexp.Compile(`mul\(\d{1,3},\d{1,3}\)`)
-	digitsRegex, _ := regexp.Compile(`\d+`)
-	doRegex, _ := regexp.Compile(`do\(\)`)
-	dontRegex, _ := regexp.Compile(`don't\(\)`)
+	operationsRegex := regexp.MustCompile(`mul\(\d{1,3},\d{1,3}\)`)
+	digitsRegex := regexp.MustCompile(`\d+`)
+	doRegex := regexp.MustCompile(`do\(\)`)
+	dontRegex := regexp.MustCompile(`don't\(\)`)
+
 	operations := []string{}
 	enabled := true
 
@@ -60,18 +62,18 @@ func SecondHalf() int {
 					currentIndex += matchIndices[1]
 					enabled = false
 					continue
-				} else {
-					instruction += text[currentIndex:]
 				}
-			} else {
-				matchIndices := doRegex.FindStringIndex(text[currentIndex:])
-				if matchIndices != nil {
-					currentIndex += matchIndices[1]
-					enabled = true
-					continue
-				}
+
+				instruction += text[currentIndex:]
+				break
 			}
 
+			matchIndices := doRegex.FindStringIndex(text[currentIndex:])
+			if matchIndices != nil {
+				currentIndex += matchIndices[1]
+				enabled = true
+				continue
+			}
 			break
 		}
 
