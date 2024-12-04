@@ -12,36 +12,36 @@ func FirstHalf() int {
 	file, _ := os.Open("input.txt")
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-
 	safeCount := 0
 
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		line := scanner.Text()
-		parts := strings.SplitN(line, " ", -1)
+		text := scanner.Text()
+		substrings := strings.SplitN(text, " ", -1)
 
-		numList := make([]int, len(parts))
-		for i, part := range parts {
-			num, _ := strconv.Atoi(part)
-			numList[i] = num
+		numbers := make([]int, len(substrings))
+		for index, substring := range substrings {
+			number, _ := strconv.Atoi(substring)
+			numbers[index] = number
 		}
 
-		if numList[0]-numList[1] < 0 {
-			for leftIndex, rightIndex := 0, len(numList)-1; leftIndex < rightIndex; leftIndex, rightIndex = leftIndex+1, rightIndex-1 {
-				numList[leftIndex], numList[rightIndex] = numList[rightIndex], numList[leftIndex]
+		if numbers[0]-numbers[1] < 0 {
+			for left, right := 0, len(numbers)-1; left < right; left, right = left+1, right-1 {
+				numbers[left], numbers[right] = numbers[right], numbers[left]
 			}
 		}
 
 		safe := true
-		for i := range len(numList) - 1 {
-			difference := numList[i] - numList[i+1]
+		for index := range len(numbers) - 1 {
+			difference := numbers[index] - numbers[index+1]
 			if difference < 1 || difference > 3 {
 				safe = false
 				break
 			}
 		}
+
 		if safe {
-			safeCount = safeCount + 1
+			safeCount += 1
 		}
 	}
 
@@ -53,59 +53,61 @@ func SecondHalf() int {
 	file, _ := os.Open("input.txt")
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-
 	safeCount := 0
 
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		line := scanner.Text()
-		parts := strings.SplitN(line, " ", -1)
+		text := scanner.Text()
+		substrings := strings.SplitN(text, " ", -1)
 
-		numList := make([]int, len(parts))
-		for i, part := range parts {
-			num, _ := strconv.Atoi(part)
-			numList[i] = num
+		numbers := make([]int, len(substrings))
+		for index, substring := range substrings {
+			number, _ := strconv.Atoi(substring)
+			numbers[index] = number
 		}
 
 		reverse := func(list []int) []int {
-			for leftIndex, rightIndex := 0, len(list)-1; leftIndex < rightIndex; leftIndex, rightIndex = leftIndex+1, rightIndex-1 {
-				list[leftIndex], list[rightIndex] = list[rightIndex], list[leftIndex]
+			for left, right := 0, len(list)-1; left < right; left, right = left+1, right-1 {
+				list[left], list[right] = list[right], list[left]
 			}
+
 			return list
 		}
 
-		if numList[0]-numList[1] < 0 {
-			numList = reverse(numList)
+		if numbers[0]-numbers[1] < 0 {
+			reverse(numbers)
 		}
 
 		isSafe := func(list []int) bool {
 			safe := true
-			for i := range len(list) - 1 {
-				difference := list[i] - list[i+1]
+			for index := range len(list) - 1 {
+				difference := list[index] - list[index+1]
 				if difference < 1 || difference > 3 {
 					safe = false
 					break
 				}
 			}
+
 			return safe
 		}
 
-		if isSafe(numList) {
-			safeCount = safeCount + 1
+		if isSafe(numbers) {
+			safeCount += 1
 		} else {
 			safeIfRemoved := false
-			for i := range len(numList) {
-				numListCopy := make([]int, len(numList))
-				copy(numListCopy, numList)
+			for index := range len(numbers) {
+				numbersCopy := make([]int, len(numbers))
+				copy(numbersCopy, numbers)
 
-				removed := append(numListCopy[:i], numList[i+1:]...)
+				removed := append(numbersCopy[:index], numbers[index+1:]...)
 				if isSafe(removed) || isSafe(reverse(removed)) {
 					safeIfRemoved = true
 					break
 				}
 			}
+
 			if safeIfRemoved {
-				safeCount = safeCount + 1
+				safeCount += 1
 			}
 		}
 	}

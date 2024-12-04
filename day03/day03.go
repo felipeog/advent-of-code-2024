@@ -12,25 +12,23 @@ func FirstHalf() int {
 	file, _ := os.Open("input.txt")
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-
 	operationsRegex, _ := regexp.Compile(`mul\(\d{1,3},\d{1,3}\)`)
 	digitsRegex, _ := regexp.Compile(`\d+`)
-
 	operations := []string{}
-	sum := 0
 
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		line := scanner.Text()
-		operations = append(operations, operationsRegex.FindAllString(line, -1)...)
+		text := scanner.Text()
+		operations = append(operations, operationsRegex.FindAllString(text, -1)...)
 	}
 
+	sum := 0
 	for _, operation := range operations {
-		digits := digitsRegex.FindAllString(operation, 2)
-		leftDigit, _ := strconv.Atoi(digits[0])
-		rightDigit, _ := strconv.Atoi(digits[1])
+		matches := digitsRegex.FindAllString(operation, 2)
+		leftValue, _ := strconv.Atoi(matches[0])
+		rightValue, _ := strconv.Atoi(matches[1])
 
-		sum = sum + leftDigit*rightDigit
+		sum += leftValue * rightValue
 	}
 
 	return sum
@@ -41,36 +39,34 @@ func SecondHalf() int {
 	file, _ := os.Open("input.txt")
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-
 	operationsRegex, _ := regexp.Compile(`mul\(\d{1,3},\d{1,3}\)`)
 	digitsRegex, _ := regexp.Compile(`\d+`)
 	doRegex, _ := regexp.Compile(`do\(\)`)
 	dontRegex, _ := regexp.Compile(`don't\(\)`)
-
-	enabled := true
 	operations := []string{}
+	enabled := true
 
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		line := scanner.Text()
+		text := scanner.Text()
 		instruction := ""
 		currentIndex := 0
 
 		for {
 			if enabled {
-				matchIndices := dontRegex.FindStringIndex(line[currentIndex:])
+				matchIndices := dontRegex.FindStringIndex(text[currentIndex:])
 				if matchIndices != nil {
-					instruction = instruction + line[currentIndex:currentIndex+matchIndices[0]]
-					currentIndex = currentIndex + matchIndices[1]
+					instruction += text[currentIndex : currentIndex+matchIndices[0]]
+					currentIndex += matchIndices[1]
 					enabled = false
 					continue
 				} else {
-					instruction = instruction + line[currentIndex:]
+					instruction += text[currentIndex:]
 				}
 			} else {
-				matchIndices := doRegex.FindStringIndex(line[currentIndex:])
+				matchIndices := doRegex.FindStringIndex(text[currentIndex:])
 				if matchIndices != nil {
-					currentIndex = currentIndex + matchIndices[1]
+					currentIndex += matchIndices[1]
 					enabled = true
 					continue
 				}
@@ -84,11 +80,11 @@ func SecondHalf() int {
 
 	sum := 0
 	for _, operation := range operations {
-		digits := digitsRegex.FindAllString(operation, 2)
-		leftDigit, _ := strconv.Atoi(digits[0])
-		rightDigit, _ := strconv.Atoi(digits[1])
+		matches := digitsRegex.FindAllString(operation, 2)
+		leftValue, _ := strconv.Atoi(matches[0])
+		rightValue, _ := strconv.Atoi(matches[1])
 
-		sum = sum + leftDigit*rightDigit
+		sum += leftValue * rightValue
 	}
 
 	return sum

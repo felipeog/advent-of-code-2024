@@ -13,19 +13,16 @@ func FirstHalf() int {
 	file, _ := os.Open("input.txt")
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-
-	sum := 0
-
 	leftList := []int{}
 	rightList := []int{}
 
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		line := scanner.Text()
-		parts := strings.SplitN(line, "   ", 2)
+		text := scanner.Text()
+		substrings := strings.SplitN(text, "   ", 2)
 
-		leftValue, _ := strconv.Atoi(parts[0])
-		rightValue, _ := strconv.Atoi(parts[1])
+		leftValue, _ := strconv.Atoi(substrings[0])
+		rightValue, _ := strconv.Atoi(substrings[1])
 
 		leftList = append(leftList, leftValue)
 		rightList = append(rightList, rightValue)
@@ -41,8 +38,9 @@ func FirstHalf() int {
 		return n
 	}
 
+	sum := 0
 	for index := range leftList {
-		sum = sum + absInt(leftList[index]-rightList[index])
+		sum += absInt(leftList[index] - rightList[index])
 	}
 
 	return sum
@@ -53,42 +51,40 @@ func SecondHalf() int {
 	file, _ := os.Open("input.txt")
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-
-	sum := 0
-
 	leftList := []int{}
 	rightList := []int{}
 
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		line := scanner.Text()
-		parts := strings.SplitN(line, "   ", 2)
+		text := scanner.Text()
+		substrings := strings.SplitN(text, "   ", 2)
 
-		leftValue, _ := strconv.Atoi(parts[0])
-		rightValue, _ := strconv.Atoi(parts[1])
+		leftValue, _ := strconv.Atoi(substrings[0])
+		rightValue, _ := strconv.Atoi(substrings[1])
 
 		leftList = append(leftList, leftValue)
 		rightList = append(rightList, rightValue)
 	}
 
-	rightListMap := make(map[int]int)
+	rightListFrequencyMap := make(map[int]int)
 	for index := range rightList {
-		mapKey := rightList[index]
-		count, exists := rightListMap[mapKey]
+		rightValue := rightList[index]
+		_, exists := rightListFrequencyMap[rightValue]
 
 		if exists {
-			rightListMap[mapKey] = count + 1
+			rightListFrequencyMap[rightValue] += 1
 		} else {
-			rightListMap[mapKey] = 1
+			rightListFrequencyMap[rightValue] = 1
 		}
 	}
 
+	sum := 0
 	for index := range leftList {
-		leftItem := leftList[index]
-		rightCount, exists := rightListMap[leftItem]
+		leftValue := leftList[index]
+		_, exists := rightListFrequencyMap[leftValue]
 
 		if exists {
-			sum = sum + leftItem*rightCount
+			sum += leftValue * rightListFrequencyMap[leftValue]
 		}
 	}
 
