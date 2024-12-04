@@ -17,7 +17,7 @@ func FirstHalf() int {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		text := scanner.Text()
-		substrings := strings.SplitN(text, " ", -1)
+		substrings := strings.Fields(text)
 
 		numbers := make([]int, len(substrings))
 		for index, substring := range substrings {
@@ -41,7 +41,7 @@ func FirstHalf() int {
 		}
 
 		if safe {
-			safeCount += 1
+			safeCount++
 		}
 	}
 
@@ -53,12 +53,31 @@ func SecondHalf() int {
 	file, _ := os.Open("input.txt")
 	defer file.Close()
 
+	reverse := func(list []int) []int {
+		for left, right := 0, len(list)-1; left < right; left, right = left+1, right-1 {
+			list[left], list[right] = list[right], list[left]
+		}
+		return list
+	}
+
+	isSafe := func(list []int) bool {
+		safe := true
+		for index := range len(list) - 1 {
+			difference := list[index] - list[index+1]
+			if difference < 1 || difference > 3 {
+				safe = false
+				break
+			}
+		}
+		return safe
+	}
+
 	safeCount := 0
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		text := scanner.Text()
-		substrings := strings.SplitN(text, " ", -1)
+		substrings := strings.Fields(text)
 
 		numbers := make([]int, len(substrings))
 		for index, substring := range substrings {
@@ -66,49 +85,35 @@ func SecondHalf() int {
 			numbers[index] = number
 		}
 
-		reverse := func(list []int) []int {
-			for left, right := 0, len(list)-1; left < right; left, right = left+1, right-1 {
-				list[left], list[right] = list[right], list[left]
-			}
-
-			return list
-		}
-
 		if numbers[0]-numbers[1] < 0 {
 			reverse(numbers)
 		}
 
-		isSafe := func(list []int) bool {
-			safe := true
-			for index := range len(list) - 1 {
-				difference := list[index] - list[index+1]
-				if difference < 1 || difference > 3 {
-					safe = false
-					break
-				}
-			}
-
-			return safe
+		if isSafe(numbers) {
+			safeCount++
+			continue
 		}
 
-		if isSafe(numbers) {
-			safeCount += 1
-		} else {
-			safeIfRemoved := false
-			for index := range len(numbers) {
-				numbersCopy := make([]int, len(numbers))
-				copy(numbersCopy, numbers)
+		safeIfRemoved := false
+		for index := range len(numbers) {
+			numbersCopy := make([]int, len(numbers))
+			copy(numbersCopy, numbers)
 
-				removed := append(numbersCopy[:index], numbers[index+1:]...)
-				if isSafe(removed) || isSafe(reverse(removed)) {
-					safeIfRemoved = true
-					break
-				}
+			removed := append(numbersCopy[:index], numbers[index+1:]...)
+			if isSafe(removed) {
+				safeIfRemoved = true
+				break
 			}
 
-			if safeIfRemoved {
-				safeCount += 1
+			reverse(removed)
+			if isSafe(removed) {
+				safeIfRemoved = true
+				break
 			}
+		}
+
+		if safeIfRemoved {
+			safeCount++
 		}
 	}
 
