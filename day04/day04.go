@@ -11,7 +11,7 @@ func FirstHalf() int {
 	file, _ := os.Open("input.txt")
 	defer file.Close()
 
-	var matrix [][]string
+	matrix := [][]string{}
 	xmas := "XMAS"
 
 	scanner := bufio.NewScanner(file)
@@ -69,9 +69,7 @@ func SecondHalf() int {
 	file, _ := os.Open("input.txt")
 	defer file.Close()
 
-	var matrix [][]string
-	mas := "MAS"
-	sam := "SAM"
+	matrix := [][]string{}
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -80,12 +78,22 @@ func SecondHalf() int {
 		matrix = append(matrix, substrings)
 	}
 
+	isDiagonalValid := func(diagonal string) bool {
+		validValues := []string{"MAS", "SAM"}
+		for _, value := range validValues {
+			if diagonal == value {
+				return true
+			}
+		}
+		return false
+	}
+
 	count := 0
 	for rowIndex, row := range matrix {
 		for colIndex := range row {
 			letter := matrix[rowIndex][colIndex]
-			var diagonal1 string
-			var diagonal2 string
+			diagonal1 := ""
+			diagonal2 := ""
 
 			if letter != "A" {
 				continue
@@ -100,8 +108,7 @@ func SecondHalf() int {
 				diagonal1 = matrix[rowIndex-1][colIndex-1] + letter + matrix[rowIndex+1][colIndex+1]
 				diagonal2 = matrix[rowIndex-1][colIndex+1] + letter + matrix[rowIndex+1][colIndex-1]
 
-				// TODO: improve string matching?
-				if (diagonal1 == sam || diagonal1 == mas) && (diagonal2 == sam || diagonal2 == mas) {
+				if isDiagonalValid(diagonal1) && isDiagonalValid(diagonal2) {
 					count++
 				}
 			}
