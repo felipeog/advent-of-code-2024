@@ -99,12 +99,8 @@ func SecondHalf() int {
 				continue
 			}
 
-			hasTop := rowIndex-1 >= 0
-			hasRight := colIndex+1 < len(matrix[0])
-			hasBottom := rowIndex+1 < len(matrix)
-			hasLeft := colIndex-1 >= 0
-
-			if hasTop && hasRight && hasBottom && hasLeft {
+			inside := rowIndex-1 >= 0 && rowIndex+1 < len(matrix) && colIndex-1 >= 0 && colIndex+1 < len(matrix[0])
+			if inside {
 				diagonal1 = matrix[rowIndex-1][colIndex-1] + letter + matrix[rowIndex+1][colIndex+1]
 				diagonal2 = matrix[rowIndex-1][colIndex+1] + letter + matrix[rowIndex+1][colIndex-1]
 
