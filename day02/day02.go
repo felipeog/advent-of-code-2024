@@ -25,7 +25,8 @@ func FirstHalf() int {
 			numbers[index] = number
 		}
 
-		if numbers[0]-numbers[1] < 0 {
+		// reverse to always deal with decreasing numbers
+		if numbers[0]-numbers[len(numbers)-1] < 0 {
 			for left, right := 0, len(numbers)-1; left < right; left, right = left+1, right-1 {
 				numbers[left], numbers[right] = numbers[right], numbers[left]
 			}
@@ -87,6 +88,7 @@ func SecondHalf() int {
 			numbers[index] = number
 		}
 
+		// reverse to always deal with decreasing numbers
 		if numbers[0]-numbers[len(numbers)-1] < 0 {
 			numbers = reverse(numbers)
 		}

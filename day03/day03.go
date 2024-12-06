@@ -55,6 +55,7 @@ func SecondHalf() int {
 		currentIndex := 0
 
 		for {
+			// do(), store enabled instruction
 			if enabled {
 				matchIndices := dontRegex.FindStringIndex(text[currentIndex:])
 				if matchIndices != nil {
@@ -68,12 +69,14 @@ func SecondHalf() int {
 				break
 			}
 
+			// don't(), update current index
 			matchIndices := doRegex.FindStringIndex(text[currentIndex:])
 			if matchIndices != nil {
 				currentIndex += matchIndices[1]
 				enabled = true
 				continue
 			}
+
 			break
 		}
 
