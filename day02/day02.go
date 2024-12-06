@@ -62,16 +62,16 @@ func SecondHalf() int {
 		return listCopy
 	}
 
-	isSafe := func(list []int) bool {
-		safe := true
+	getInvalidIndex := func(list []int) int {
+		invalidIndex := -1
 		for index := range len(list) - 1 {
 			difference := list[index] - list[index+1]
 			if difference < 1 || difference > 3 {
-				safe = false
+				invalidIndex = index
 				break
 			}
 		}
-		return safe
+		return invalidIndex
 	}
 
 	safeCount := 0
@@ -91,26 +91,30 @@ func SecondHalf() int {
 			numbers = reverse(numbers)
 		}
 
-		if isSafe(numbers) {
+		// if it's valid, increment
+		invalidIndex := getInvalidIndex(numbers)
+		if invalidIndex < 0 {
 			safeCount++
 			continue
 		}
 
-		// TODO: remove wrong index first, then remove the rest
-		safeIfRemoved := false
-		for index := range len(numbers) {
-			numbersCopy := make([]int, len(numbers))
-			copy(numbersCopy, numbers)
-
-			removed := append(numbersCopy[:index], numbers[index+1:]...)
-			if isSafe(removed) {
-				safeIfRemoved = true
-				break
-			}
+		// if it's not valid, try removing the invalid index
+		removed := append(append([]int{}, numbers[:invalidIndex]...), numbers[invalidIndex+1:]...)
+		if getInvalidIndex(removed) < 0 {
+			safeCount++
+			continue
 		}
 
-		if safeIfRemoved {
-			safeCount++
+		// if it's still not valid, try removing each index but the invalid index
+		for index := range len(numbers) {
+			if index == invalidIndex {
+				continue
+			}
+			removed := append(append([]int{}, numbers[:index]...), numbers[index+1:]...)
+			if getInvalidIndex(removed) < 0 {
+				safeCount++
+				break
+			}
 		}
 	}
 
