@@ -156,18 +156,20 @@ func SecondHalf() int {
 
 	sum := 0
 	for _, update := range updates {
-		invalidIndex := getInvalidIndex(update)
-		if invalidIndex < 0 {
+		if getInvalidIndex(update) < 0 {
 			continue
 		}
 
-		result := []int{}
-		for _, page := range update {
-			if len(result) == 0 {
-				result = append(result, page)
-				continue
+		result := append([]int{}, update...)
+		for {
+			invalidIndex := getInvalidIndex(result)
+			if invalidIndex < 0 {
+				break
 			}
 
+			page := result[invalidIndex]
+
+			result = append([]int{}, append(result[:invalidIndex], result[invalidIndex+1:]...)...)
 			for index := range len(result) {
 				if index == 0 && contains(rulesLeftMap[page], result[index]) {
 					result = append([]int{page}, result...)
