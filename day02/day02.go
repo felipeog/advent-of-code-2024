@@ -96,6 +96,7 @@ func SecondHalf() int {
 			continue
 		}
 
+		// TODO: remove wrong index first, then remove the rest
 		safeIfRemoved := false
 		for index := range len(numbers) {
 			numbersCopy := make([]int, len(numbers))
