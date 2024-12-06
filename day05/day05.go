@@ -169,7 +169,7 @@ func SecondHalf() int {
 
 			page := result[invalidIndex]
 
-			result = append([]int{}, append(result[:invalidIndex], result[invalidIndex+1:]...)...)
+			result = append(append([]int{}, result[:invalidIndex]...), result[invalidIndex+1:]...)
 			for index := range len(result) {
 				if index == 0 && contains(rulesLeftMap[page], result[index]) {
 					result = append([]int{page}, result...)
@@ -182,12 +182,7 @@ func SecondHalf() int {
 				}
 
 				if contains(rulesRightMap[page], result[index]) && contains(rulesLeftMap[page], result[index+1]) {
-					left := result[:index+1]
-					right := result[index+1:]
-
-					result = append([]int{}, left...)
-					result = append(result, page)
-					result = append(result, right...)
+					result = append(append(append([]int{}, result[:index+1]...), page), result[index+1:]...)
 					break
 				}
 			}
