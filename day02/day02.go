@@ -87,7 +87,7 @@ func SecondHalf() int {
 			numbers[index] = number
 		}
 
-		if numbers[0]-numbers[1] < 0 {
+		if numbers[0]-numbers[len(numbers)-1] < 0 {
 			numbers = reverse(numbers)
 		}
 
@@ -102,7 +102,7 @@ func SecondHalf() int {
 			copy(numbersCopy, numbers)
 
 			removed := append(numbersCopy[:index], numbers[index+1:]...)
-			if isSafe(removed) || isSafe(reverse(removed)) {
+			if isSafe(removed) {
 				safeIfRemoved = true
 				break
 			}
