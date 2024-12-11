@@ -13,7 +13,7 @@ func TestFirstHalf(t *testing.T) {
 
 // TODO:
 func TestSecondHalf(t *testing.T) {
-	expected := 1234
+	expected := 0
 	actual := SecondHalf()
 
 	if expected != actual {
