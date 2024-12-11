@@ -67,7 +67,6 @@ func FirstHalf() int {
 }
 
 func SecondHalf() int {
-
 	type entry struct {
 		value   int
 		numbers []int
