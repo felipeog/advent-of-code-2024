@@ -2,9 +2,8 @@ package day11
 
 import "testing"
 
-// TODO:
 func TestFirstHalf(t *testing.T) {
-	expected := 0
+	expected := 228668
 	actual := FirstHalf()
 
 	if expected != actual {
