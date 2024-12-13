@@ -48,7 +48,49 @@ func FirstHalf() int {
 	return len(stones)
 }
 
-// TODO:
 func SecondHalf() int {
-	return -1
+	// file, _ := os.Open("sample.txt")
+	file, _ := os.Open("input.txt")
+	scanner := bufio.NewScanner(file)
+	scanner.Scan()
+	text := scanner.Text()
+	file.Close()
+
+	countMap := map[int]int{}
+
+	substrings := strings.Fields(text)
+	for _, substring := range substrings {
+		value, _ := strconv.Atoi(substring)
+		countMap[value]++
+	}
+
+	for i := 0; i < 75; i++ {
+		nextCountMap := map[int]int{}
+
+		for key, value := range countMap {
+			if key == 0 {
+				nextCountMap[1] += value
+				continue
+			}
+
+			if stringValue := strconv.Itoa(key); len(stringValue)%2 == 0 {
+				left, _ := strconv.Atoi(stringValue[:len(stringValue)/2])
+				right, _ := strconv.Atoi(stringValue[len(stringValue)/2:])
+				nextCountMap[left] += value
+				nextCountMap[right] += value
+				continue
+			}
+
+			nextCountMap[key*2024] += value
+		}
+
+		countMap = nextCountMap
+	}
+
+	sum := 0
+	for _, value := range countMap {
+		sum += value
+	}
+
+	return sum
 }
