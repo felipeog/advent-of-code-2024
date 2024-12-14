@@ -122,6 +122,86 @@ func SecondHalf() int {
 		}
 	}
 
+	countAxisPerimeter := func(matrix [][]areaCoord, axis string, perimeterMap map[coord]bool, perimeter *int) {
+		for col := 0; col < len(matrix[0]); col++ {
+			for row := 0; row < len(matrix); row++ {
+				_, curr := perimeterMap[coord{row, col}]
+				var right bool
+				var bottomRight bool
+				var bottom bool
+				var bottomLeft bool
+				var left bool
+
+				if axis == "vertical" {
+					_, right = perimeterMap[coord{row, col + 1}]
+					_, bottomRight = perimeterMap[coord{row + 1, col + 1}]
+					_, bottom = perimeterMap[coord{row + 1, col}]
+					_, bottomLeft = perimeterMap[coord{row + 1, col - 1}]
+					_, left = perimeterMap[coord{row, col - 1}]
+				}
+
+				if axis == "horizontal" {
+					_, right = perimeterMap[coord{row - 1, col}]
+					_, bottomRight = perimeterMap[coord{row - 1, col + 1}]
+					_, bottom = perimeterMap[coord{row, col + 1}]
+					_, bottomLeft = perimeterMap[coord{row + 1, col + 1}]
+					_, left = perimeterMap[coord{row + 1, col}]
+				}
+
+				if !curr {
+					continue
+				}
+
+				// check zero
+				if left && curr && right {
+					continue
+				}
+				if !bottomLeft && bottom && !bottomRight {
+					continue
+				}
+				if left && curr && !right && bottomLeft && bottom && !bottomRight {
+					continue
+				}
+				if !left && curr && right && !bottomLeft && bottom && bottomRight {
+					continue
+				}
+
+				// check one
+				if left && curr && !right {
+					if bottom && !bottomRight {
+						continue
+					}
+					*perimeter++
+					continue
+				}
+
+				if !left && curr && right {
+					if bottom && !bottomLeft {
+						continue
+					}
+					*perimeter++
+					continue
+				}
+				if !left && curr && !right {
+					if bottomLeft && bottom && !bottomRight {
+						*perimeter++
+						continue
+					}
+					if !bottomLeft && bottom && bottomRight {
+						*perimeter++
+						continue
+					}
+				}
+
+				// check two
+				if !left && curr && !right {
+					*perimeter += 2
+					continue
+				}
+			}
+		}
+	}
+
 	matrix := [][]areaCoord{}
 	for scanner.Scan() {
 		text := scanner.Text()
@@ -139,139 +219,15 @@ func SecondHalf() int {
 	for rowIndex, row := range matrix {
 		for colIndex := range row {
 			area := 0
-			perimeter := 0
 			perimeterMap := map[coord]bool{}
 			traverse(matrix, matrix[rowIndex][colIndex], &area, perimeterMap)
 
-			// vertical
 			vertical := 0
-			for col := 0; col < len(matrix[0]); col++ {
-				for row := 0; row < len(matrix); row++ {
-					_, curr := perimeterMap[coord{row, col}]
-					_, right := perimeterMap[coord{row, col + 1}]
-					_, bottomRight := perimeterMap[coord{row + 1, col + 1}]
-					_, bottom := perimeterMap[coord{row + 1, col}]
-					_, bottomLeft := perimeterMap[coord{row + 1, col - 1}]
-					_, left := perimeterMap[coord{row, col - 1}]
-
-					if !curr {
-						continue
-					}
-
-					// check zero
-					if left && curr && right {
-						continue
-					}
-					if !bottomLeft && bottom && !bottomRight {
-						continue
-					}
-					if left && curr && !right && bottomLeft && bottom && !bottomRight {
-						continue
-					}
-					if !left && curr && right && !bottomLeft && bottom && bottomRight {
-						continue
-					}
-
-					// check one
-					if left && curr && !right {
-						if bottom && !bottomRight {
-							continue
-						}
-						vertical++
-						continue
-					}
-
-					if !left && curr && right {
-						if bottom && !bottomLeft {
-							continue
-						}
-						vertical++
-						continue
-					}
-					if !left && curr && !right {
-						if bottomLeft && bottom && !bottomRight {
-							vertical++
-							continue
-						}
-						if !bottomLeft && bottom && bottomRight {
-							vertical++
-							continue
-						}
-					}
-
-					// check two
-					if !left && curr && !right {
-						vertical += 2
-						continue
-					}
-				}
-			}
-
-			// horizontal
 			horizontal := 0
-			for col := 0; col < len(matrix[0]); col++ {
-				for row := 0; row < len(matrix); row++ {
-					_, curr := perimeterMap[coord{row, col}]
-					_, top := perimeterMap[coord{row - 1, col}]
-					_, topRight := perimeterMap[coord{row - 1, col + 1}]
-					_, right := perimeterMap[coord{row, col + 1}]
-					_, bottomRight := perimeterMap[coord{row + 1, col + 1}]
-					_, bottom := perimeterMap[coord{row + 1, col}]
+			countAxisPerimeter(matrix, "vertical", perimeterMap, &vertical)
+			countAxisPerimeter(matrix, "horizontal", perimeterMap, &horizontal)
 
-					if !curr {
-						continue
-					}
-
-					// check zero
-					if bottom && curr && top {
-						continue
-					}
-					if !bottomRight && right && !topRight {
-						continue
-					}
-					if bottom && curr && !top && bottomRight && right && !topRight {
-						continue
-					}
-					if !bottom && curr && top && !bottomRight && right && topRight {
-						continue
-					}
-
-					// check one
-					if bottom && curr && !top {
-						if right && !topRight {
-							continue
-						}
-						horizontal++
-						continue
-					}
-
-					if !bottom && curr && top {
-						if right && !bottomRight {
-							continue
-						}
-						horizontal++
-						continue
-					}
-					if !bottom && curr && !top {
-						if bottomRight && right && !topRight {
-							horizontal++
-							continue
-						}
-						if !bottomRight && right && topRight {
-							horizontal++
-							continue
-						}
-					}
-
-					// check two
-					if !bottom && curr && !top {
-						horizontal += 2
-						continue
-					}
-				}
-			}
-
-			perimeter = vertical + horizontal
+			perimeter := vertical + horizontal
 			sum += area * perimeter
 		}
 	}
