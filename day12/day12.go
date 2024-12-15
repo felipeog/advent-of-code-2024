@@ -122,7 +122,7 @@ func SecondHalf() int {
 		}
 	}
 
-	countAxisPerimeter := func(matrix [][]areaCoord, axis string, perimeterMap map[coord]bool, perimeter *int) {
+	countAxisSides := func(matrix [][]areaCoord, axis string, perimeterMap map[coord]bool, sides *int) {
 		for col := 0; col < len(matrix[0]); col++ {
 			for row := 0; row < len(matrix); row++ {
 				_, curr := perimeterMap[coord{row, col}]
@@ -171,7 +171,7 @@ func SecondHalf() int {
 					if bottom && !bottomRight {
 						continue
 					}
-					*perimeter++
+					*sides++
 					continue
 				}
 
@@ -179,23 +179,23 @@ func SecondHalf() int {
 					if bottom && !bottomLeft {
 						continue
 					}
-					*perimeter++
+					*sides++
 					continue
 				}
 				if !left && curr && !right {
 					if bottomLeft && bottom && !bottomRight {
-						*perimeter++
+						*sides++
 						continue
 					}
 					if !bottomLeft && bottom && bottomRight {
-						*perimeter++
+						*sides++
 						continue
 					}
 				}
 
 				// check two
 				if !left && curr && !right {
-					*perimeter += 2
+					*sides += 2
 					continue
 				}
 			}
@@ -224,11 +224,11 @@ func SecondHalf() int {
 
 			vertical := 0
 			horizontal := 0
-			countAxisPerimeter(matrix, "vertical", perimeterMap, &vertical)
-			countAxisPerimeter(matrix, "horizontal", perimeterMap, &horizontal)
+			countAxisSides(matrix, "vertical", perimeterMap, &vertical)
+			countAxisSides(matrix, "horizontal", perimeterMap, &horizontal)
 
-			perimeter := vertical + horizontal
-			sum += area * perimeter
+			sides := vertical + horizontal
+			sum += area * sides
 		}
 	}
 
