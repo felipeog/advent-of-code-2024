@@ -59,7 +59,73 @@ func FirstHalf() int {
 	return q1 * q2 * q3 * q4
 }
 
-// TODO:
 func SecondHalf() int {
-	return -1
+	type coord struct {
+		x int
+		y int
+	}
+
+	type robot struct {
+		px int
+		py int
+		vx int
+		vy int
+	}
+
+	const (
+		width  = 101
+		height = 103
+	)
+
+	file, _ := os.Open("input.txt")
+	scanner := bufio.NewScanner(file)
+	digitsRegex := regexp.MustCompile(`-?\d+`)
+	robots := []robot{}
+	px, py, vx, vy := 0, 0, 0, 0
+	result := 0
+
+	for scanner.Scan() {
+		matches := digitsRegex.FindAllString(scanner.Text(), 4)
+
+		px, _ = strconv.Atoi(matches[0])
+		py, _ = strconv.Atoi(matches[1])
+		vx, _ = strconv.Atoi(matches[2])
+		vy, _ = strconv.Atoi(matches[3])
+
+		robots = append(robots, robot{px, py, vx, vy})
+	}
+
+	for seconds := 0; seconds < width*height; seconds++ {
+		positionMap := map[coord]int{}
+		skip := false
+
+		for _, robot := range robots {
+			robot.px = (robot.px + robot.vx*seconds) % width
+			robot.py = (robot.py + robot.vy*seconds) % height
+
+			if robot.px < 0 {
+				robot.px += width
+			}
+
+			if robot.py < 0 {
+				robot.py += height
+			}
+
+			// skip when an overlap is found
+			if _, exists := positionMap[coord{robot.px, robot.py}]; exists {
+				skip = true
+				break
+			}
+
+			positionMap[coord{robot.px, robot.py}]++
+		}
+
+		if skip {
+			continue
+		}
+
+		result = seconds
+	}
+
+	return result
 }
