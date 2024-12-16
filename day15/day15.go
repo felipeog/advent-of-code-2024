@@ -105,15 +105,16 @@ func FirstHalf() int {
 					continue
 				}
 
-				// swap robot and free
+				// swap next (now box) and next free
+				boxMap[nextCoord] = false
+				boxMap[nextFreeCoord] = true
+				freeMap[nextFreeCoord] = false
+
+				// swap robot and next (now free)
 				freeMap[robot] = true
 				freeMap[nextCoord] = false
 				robot = nextCoord
 
-				// swap box and free
-				boxMap[nextCoord] = false
-				boxMap[nextFreeCoord] = true
-				freeMap[nextFreeCoord] = false
 				break
 			}
 		}
