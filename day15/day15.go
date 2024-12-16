@@ -215,8 +215,6 @@ func SecondHalf() int {
 
 	var getBoxesToMove func(currCoord coord, direction string, wallHit *bool, boxesToMove map[coord]bool)
 	getBoxesToMove = func(currCoord coord, direction string, wallHit *bool, boxesToMove map[coord]bool) {
-		step := stepMap[direction]
-
 		if isWall := wallMap[currCoord]; isWall {
 			*wallHit = true
 			return
@@ -225,6 +223,7 @@ func SecondHalf() int {
 			return
 		}
 
+		step := stepMap[direction]
 		if direction == left || direction == right {
 			nextCoord := coord{currCoord.row + step.row, currCoord.col + step.col}
 			boxesToMove[currCoord] = true
