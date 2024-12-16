@@ -282,6 +282,11 @@ func SecondHalf() int {
 				boxesToMove := map[coord]bool{}
 				getBoxesToMove(nextCoord, direction, &wallHit, boxesToMove)
 
+				if wallHit {
+					break
+				}
+
+				// sort boxes from furthest to closest
 				boxCoords := []coord{}
 				for boxCoord := range boxesToMove {
 					boxCoords = append(boxCoords, boxCoord)
@@ -301,10 +306,6 @@ func SecondHalf() int {
 					}
 					return 0
 				})
-
-				if wallHit {
-					break
-				}
 
 				for _, boxCoord := range boxCoords {
 					toCoord := coord{boxCoord.row + step.row, boxCoord.col + step.col}
