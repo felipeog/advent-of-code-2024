@@ -74,9 +74,7 @@ func FirstHalf() int {
 	for scanner.Scan() {
 		text := scanner.Text()
 		substrings := strings.Split(text, "")
-		for _, substring := range substrings {
-			moves = append(moves, substring)
-		}
+		moves = append(moves, substrings...)
 	}
 
 	for _, move := range moves {
@@ -138,12 +136,6 @@ func SecondHalf() int {
 	type coord struct {
 		row int
 		col int
-	}
-
-	type boxCoord struct {
-		row  int
-		col  int
-		side string
 	}
 
 	const (
@@ -218,9 +210,7 @@ func SecondHalf() int {
 	for scanner.Scan() {
 		text := scanner.Text()
 		substrings := strings.Split(text, "")
-		for _, substring := range substrings {
-			moves = append(moves, substring)
-		}
+		moves = append(moves, substrings...)
 	}
 
 	var getBoxesToMove func(currCoord coord, direction string, wallHit *bool, boxesToMove map[coord]bool)
