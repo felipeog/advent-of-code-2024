@@ -76,36 +76,24 @@ func FirstHalf() int {
 	}
 
 	for {
-		stop := false
-		for _, d := range directions {
-			if d != direction {
-				continue
-			}
+		step := stepMap[direction]
+		newRow := position[0] + step[0]
+		newCol := position[1] + step[1]
 
-			step := stepMap[d]
-			newRow := position[0] + step[0]
-			newCol := position[1] + step[1]
-
-			inside := newRow >= 0 && newRow < rowCount && newCol >= 0 && newCol < colCount
-			if !inside {
-				stop = true
-				break
-			}
-
-			key := getPosition(newRow, newCol)
-			if _, exists := obstructionsMap[key]; exists {
-				direction = getNextDirection(direction)
-				break
-			}
-
-			positionsMap[key] = true
-			position[0] = newRow
-			position[1] = newCol
-		}
-
-		if stop {
+		inside := newRow >= 0 && newRow < rowCount && newCol >= 0 && newCol < colCount
+		if !inside {
 			break
 		}
+
+		key := getPosition(newRow, newCol)
+		if _, exists := obstructionsMap[key]; exists {
+			direction = getNextDirection(direction)
+			continue
+		}
+
+		positionsMap[key] = true
+		position[0] = newRow
+		position[1] = newCol
 	}
 
 	return len(positionsMap)
@@ -113,5 +101,5 @@ func FirstHalf() int {
 
 // TODO:
 func SecondHalf() int {
-	return 0
+	return -1
 }
