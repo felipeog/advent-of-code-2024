@@ -25,7 +25,6 @@ func FirstHalf() int {
 		left  = "<"
 	)
 
-	directions := []string{up, right, down, left}
 	stepMap := map[string]coord{up: {-1, 0}, right: {0, 1}, down: {1, 0}, left: {0, -1}}
 
 	// file, _ := os.Open("sample.txt")
@@ -78,44 +77,38 @@ func FirstHalf() int {
 	}
 
 	for _, move := range moves {
-		for _, direction := range directions {
-			if move != direction {
+		nextCoord := coord{robot.row + stepMap[move].row, robot.col + stepMap[move].col}
+		if isWall := wallMap[nextCoord]; isWall {
+			continue
+		}
+		if isFree := freeMap[nextCoord]; isFree {
+			freeMap[robot] = true
+			freeMap[nextCoord] = false
+			robot = nextCoord
+			continue
+		}
+
+		nextFreeCoord := nextCoord
+		for {
+			nextFreeCoord = coord{nextFreeCoord.row + stepMap[move].row, nextFreeCoord.col + stepMap[move].col}
+			if isWall := wallMap[nextFreeCoord]; isWall {
+				break
+			}
+			if isFree := freeMap[nextFreeCoord]; !isFree {
 				continue
 			}
 
-			nextCoord := coord{robot.row + stepMap[move].row, robot.col + stepMap[move].col}
-			if isWall := wallMap[nextCoord]; isWall {
-				break
-			}
-			if isFree := freeMap[nextCoord]; isFree {
-				freeMap[robot] = true
-				freeMap[nextCoord] = false
-				robot = nextCoord
-				break
-			}
+			// swap next (now box) and next free
+			boxMap[nextCoord] = false
+			boxMap[nextFreeCoord] = true
+			freeMap[nextFreeCoord] = false
 
-			nextFreeCoord := nextCoord
-			for {
-				nextFreeCoord = coord{nextFreeCoord.row + stepMap[move].row, nextFreeCoord.col + stepMap[move].col}
-				if isWall := wallMap[nextFreeCoord]; isWall {
-					break
-				}
-				if isFree := freeMap[nextFreeCoord]; !isFree {
-					continue
-				}
+			// swap robot and next (now free)
+			freeMap[robot] = true
+			freeMap[nextCoord] = false
+			robot = nextCoord
 
-				// swap next (now box) and next free
-				boxMap[nextCoord] = false
-				boxMap[nextFreeCoord] = true
-				freeMap[nextFreeCoord] = false
-
-				// swap robot and next (now free)
-				freeMap[robot] = true
-				freeMap[nextCoord] = false
-				robot = nextCoord
-
-				break
-			}
+			break
 		}
 	}
 
@@ -152,7 +145,6 @@ func SecondHalf() int {
 		left  = "<"
 	)
 
-	directions := []string{up, right, down, left}
 	stepMap := map[string]coord{up: {-1, 0}, right: {0, 1}, down: {1, 0}, left: {0, -1}}
 
 	// file, _ := os.Open("sample.txt")
@@ -249,71 +241,65 @@ func SecondHalf() int {
 	}
 
 	for _, move := range moves {
-		for _, direction := range directions {
-			if move != direction {
-				continue
-			}
-			step := stepMap[move]
+		step := stepMap[move]
 
-			nextCoord := coord{robot.row + step.row, robot.col + step.col}
-			if isWall := wallMap[nextCoord]; isWall {
-				break
-			}
-			if isFree := freeMap[nextCoord]; isFree {
-				freeMap[robot] = true
-				freeMap[nextCoord] = false
-				robot = nextCoord
-				break
-			}
-
-			for {
-				wallHit := false
-				boxesToMove := map[coord]bool{}
-				getBoxesToMove(nextCoord, direction, &wallHit, boxesToMove)
-
-				if wallHit {
-					break
-				}
-
-				// sort boxes from furthest to closest
-				boxCoords := []coord{}
-				for boxCoord := range boxesToMove {
-					boxCoords = append(boxCoords, boxCoord)
-				}
-				slices.SortFunc(boxCoords, func(a, b coord) int {
-					if step.row < 0 {
-						return a.row - b.row
-					}
-					if step.row > 0 {
-						return b.row - a.row
-					}
-					if step.col < 0 {
-						return a.col - b.col
-					}
-					if step.col > 0 {
-						return b.col - a.col
-					}
-					return 0
-				})
-
-				for _, boxCoord := range boxCoords {
-					toCoord := coord{boxCoord.row + step.row, boxCoord.col + step.col}
-
-					// swap box and to (now free)
-					boxMap[toCoord] = boxMap[boxCoord]
-					delete(boxMap, boxCoord)
-					freeMap[boxCoord] = true
-					freeMap[toCoord] = false
-				}
-
-				// swap robot and next (now free)
-				freeMap[robot] = true
-				freeMap[nextCoord] = false
-				robot = nextCoord
-				break
-			}
+		nextCoord := coord{robot.row + step.row, robot.col + step.col}
+		if isWall := wallMap[nextCoord]; isWall {
+			continue
+		}
+		if isFree := freeMap[nextCoord]; isFree {
+			freeMap[robot] = true
+			freeMap[nextCoord] = false
+			robot = nextCoord
+			continue
 		}
 
+		for {
+			wallHit := false
+			boxesToMove := map[coord]bool{}
+			getBoxesToMove(nextCoord, move, &wallHit, boxesToMove)
+
+			if wallHit {
+				break
+			}
+
+			// sort boxes from furthest to closest
+			boxCoords := []coord{}
+			for boxCoord := range boxesToMove {
+				boxCoords = append(boxCoords, boxCoord)
+			}
+			slices.SortFunc(boxCoords, func(a, b coord) int {
+				if step.row < 0 {
+					return a.row - b.row
+				}
+				if step.row > 0 {
+					return b.row - a.row
+				}
+				if step.col < 0 {
+					return a.col - b.col
+				}
+				if step.col > 0 {
+					return b.col - a.col
+				}
+				return 0
+			})
+
+			for _, boxCoord := range boxCoords {
+				toCoord := coord{boxCoord.row + step.row, boxCoord.col + step.col}
+
+				// swap box and to (now free)
+				boxMap[toCoord] = boxMap[boxCoord]
+				delete(boxMap, boxCoord)
+				freeMap[boxCoord] = true
+				freeMap[toCoord] = false
+			}
+
+			// swap robot and next (now free)
+			freeMap[robot] = true
+			freeMap[nextCoord] = false
+			robot = nextCoord
+			break
+		}
 	}
 
 	sum := 0
