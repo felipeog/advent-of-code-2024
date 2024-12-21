@@ -14,15 +14,6 @@ func FirstHalf() int {
 		col int
 	}
 
-	type path struct {
-		cost       int
-		visitedMap map[coord]int
-	}
-
-	type cost struct {
-		moves int
-	}
-
 	const (
 		up    = 0
 		right = 1
@@ -30,7 +21,12 @@ func FirstHalf() int {
 		left  = 3
 	)
 
-	stepMap := map[int]coord{up: {-1, 0}, right: {0, 1}, down: {1, 0}, left: {0, -1}}
+	stepMap := map[int]coord{
+		up:    {-1, 0},
+		right: {0, 1},
+		down:  {1, 0},
+		left:  {0, -1},
+	}
 
 	// file, _ := os.Open("sample.txt")
 	file, _ := os.Open("input.txt")
@@ -55,34 +51,23 @@ func FirstHalf() int {
 	}
 
 	minMoves := math.MaxInt
-	minCost := make(map[coord]cost)
+	minCost := make(map[coord]int)
 	visitedMap := map[coord]int{}
-	pathCost := cost{0}
-	validPaths := []path{}
+	pathCost := 0
 
-	var getPaths func(currCoord coord, direction int)
-	getPaths = func(currCoord coord, direction int) {
+	var traverse func(currCoord coord, direction int)
+	traverse = func(currCoord coord, direction int) {
 		// base case
 		if currCoord == end {
-			if pathCost.moves < minMoves {
-				minMoves = pathCost.moves
+			if pathCost < minMoves {
+				minMoves = pathCost
 			}
-
-			visitedMapCopy := make(map[coord]int)
-			for key, value := range visitedMap {
-				visitedMapCopy[key] = value
-			}
-
-			validPaths = append(validPaths, path{
-				cost:       pathCost.moves,
-				visitedMap: visitedMapCopy,
-			})
 
 			return
 		}
 
 		// skip if it isn't cheaper
-		if pathCost.moves >= minMoves {
+		if pathCost >= minMoves {
 			return
 		}
 
@@ -104,10 +89,10 @@ func FirstHalf() int {
 			nextCoord := coord{currCoord.row + step.row, currCoord.col + step.col}
 
 			// skip if it isn't cheaper
-			if prevCost, exists := minCost[nextCoord]; exists && pathCost.moves >= prevCost.moves {
+			if prevCost, exists := minCost[nextCoord]; exists && pathCost >= prevCost {
 				continue
 			}
-			minCost[nextCoord] = cost{pathCost.moves}
+			minCost[nextCoord] = pathCost
 
 			// skip if it's invalid
 			if nextCoord.row < 0 || nextCoord.row >= rowCount || nextCoord.col < 0 || nextCoord.col >= colCount {
@@ -122,18 +107,18 @@ func FirstHalf() int {
 
 			// make move
 			visitedMap[nextCoord] = nextDirection
-			pathCost.moves++
+			pathCost++
 
 			// recurse
-			getPaths(nextCoord, nextDirection)
+			traverse(nextCoord, nextDirection)
 
 			// backtrack
 			delete(visitedMap, nextCoord)
-			pathCost.moves--
+			pathCost--
 		}
 	}
 
-	getPaths(start, down)
+	traverse(start, down)
 
 	return minMoves
 }
